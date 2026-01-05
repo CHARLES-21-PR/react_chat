@@ -47,8 +47,8 @@ function Login(props) {
     }
     
   return (
-    <div style={{ display: "flex", justifyContent: "center !important", alignItems: "center", height: "100vh" }}>
-        <div style={{ background: "#222745ff", maxWidth: 400, padding: 20, borderRadius: 10, color: "white", boxShadow: "0 0 10px rgba(0,0,0,0.5)" }}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh",width: "100%", background: "#ffffffff" }}>
+        <div style={{ background: "#222745ff", maxWidth: 400, padding: 20, borderRadius: 10, color: "white", boxShadow: "0 0 10px rgba(0,0,0,0.5)", padding: "30px 20px" }}>
             <form onSubmit={submitHundler} style={{display: 'flex', flexDirection: 'column', maxWidth: 300, textAlign: 'center'}}>
              { isRegistered ? <h2 className='titleLoginRegister'>Iniciar Sesión</h2> : <h2 className='titleLoginRegister'>Registrarse</h2> }
             <br />
