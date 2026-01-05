@@ -47,21 +47,25 @@ function Login(props) {
     }
     
   return (
-    <div>
-        <form onSubmit={submitHundler}>
-            { isRegistered ? <h2>Iniciar Sesión</h2> : <h2>Registrarse</h2> }
-        <br />
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" />
-        <br />
-        <label htmlFor="password">Password:</label>
-        <input type="password" id="password" />
-        <br />
-        <button type="submit">{ isRegistered ? "Iniciar Sesión" : "Registrarse" }</button>
-        </form>
-        <button onClick={() => setIsRegistered(!isRegistered)}>
-            { isRegistered ? "¿No tienes una cuenta? Regístrate" : "¿Ya tienes una cuenta? Inicia sesión" }
-        </button>
+    <div style={{ display: "flex", justifyContent: "center !important", alignItems: "center", height: "100vh" }}>
+        <div style={{ background: "#222745ff", maxWidth: 400, padding: 20, borderRadius: 10, color: "white", boxShadow: "0 0 10px rgba(0,0,0,0.5)" }}>
+            <form onSubmit={submitHundler} style={{display: 'flex', flexDirection: 'column', maxWidth: 300, textAlign: 'center'}}>
+             { isRegistered ? <h2 className='titleLoginRegister'>Iniciar Sesión</h2> : <h2 className='titleLoginRegister'>Registrarse</h2> }
+            <br />
+            <label htmlFor="email" style={{ textAlign: "left" }}>Email:</label>
+            <input type="email" id="email" />
+            <br />
+            <label htmlFor="password" style={{ textAlign: "left" }}>Password:</label>
+            <input type="password" id="password" />
+            <br />
+            <button type="submit">{ isRegistered ? "Iniciar Sesión" : "Registrarse" }</button>
+            </form>
+            <br />
+
+            <button onClick={() => setIsRegistered(!isRegistered)}>
+                { isRegistered ? "¿No tienes una cuenta? Regístrate" : "¿Ya tienes una cuenta? Inicia sesión" }
+            </button>
+        </div>
     </div>
     
   )

@@ -1,5 +1,5 @@
 * {
-  max-width: 1280px;
+  
   margin: 0;
   padding: 0;
   
@@ -21,4 +21,35 @@
 
 .read-the-docs {
   color: #888;
+}
+
+
+input {
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  color: #fff;
+  padding: 0.5em;
+  border-radius: 8px;
+  border-bottom: #fff 2px solid;
+  height: 2em;
+  background-color: #292929;
+  outline-style: none;
+}
+
+.titleLoginRegister {
+  
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 0.5em;
+}
+
+.titleLoginRegister::after{
+  content: "";
+  background-color: #fff;
+  height: 2px;
+  width: 30px;
+  display: block;
+  position: absolute;
+  bottom: 0;
 }
