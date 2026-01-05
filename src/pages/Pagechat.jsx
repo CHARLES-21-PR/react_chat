@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { auth } from "../conectionAPI/firebase"
 import { signOut } from "firebase/auth";
 import { styled, useTheme } from '@mui/material/styles';
+import { Link, Outlet } from 'react-router-dom';
+ 
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -21,10 +23,42 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import Tooltip from '@mui/material/Tooltip';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import PeopleIcon from '@mui/icons-material/People';
+import WavingHandIcon from '@mui/icons-material/WavingHand';
+import SeachUser from '../pages/SeachUser';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 const drawerWidth = 240;
+const settings = [
+    { name: 'Profile',
+      Icon:   <AccountBoxIcon />
+     },
+    { name: 'Logout',
+      Icon:   <LogoutIcon />
+    }
+];
 
+const menuItems = [
+    {
+        text: <Link to="/search" style={{ textDecoration: 'none', color: 'inherit' }}>Buscar Usuario</Link>,
+        icon: <Link to="/search" style={{ textDecoration: 'none', color: 'inherit' }}><PersonSearchIcon /></Link>
+    },
+    {
+        text: 'Amigos',
+        icon: <PeopleIcon />
+
+    }
+]
+  
+  
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create('width', {
@@ -105,14 +139,31 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 
 function Pagechat(props) {
-    function handleLogout() {
-        signOut(auth)
-        
-    }
+    const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   
-    
-        const theme = useTheme();
+  
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleMenuClick = (setting) => {
+    handleCloseUserMenu();
+    if (setting === 'Logout') {
+        signOut(auth);
+        props.setUser(null);
+    }
+  }
+
+
+
+    const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -143,9 +194,40 @@ function Pagechat(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Box sx={{ display: 'flex', justifyContent: 'space-between',  width: '100%' }}>
+            <Typography variant="h6" noWrap component="div">
             Mini variant drawer
           </Typography>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting.name} onClick={() => handleMenuClick(setting.name)}>
+                  <Typography sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>{setting.Icon} {setting.name}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -156,8 +238,8 @@ function Pagechat(props) {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {menuItems.map((item) => (
+            <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={[
                   {
@@ -188,10 +270,10 @@ function Pagechat(props) {
                         },
                   ]}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {item.icon}
                 </ListItemIcon>
                 <ListItemText
-                  primary={text}
+                  primary={item.text}
                   sx={[
                     open
                       ? {
@@ -261,10 +343,16 @@ function Pagechat(props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Typography>
-          { `¡Biemvenido, ${auth.currentUser.email}!`}
-        </Typography>
-        <button onClick={handleLogout}>Logout</button>
+        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
+          { location.pathname === '/' ? 
+            <>
+              <WavingHandIcon />
+              { `¡Biemvenido, ${auth.currentUser.email}!`}
+            </>
+             :
+              <Outlet /> }
+        </div>
+        
       </Box>
     </Box>
     </div>

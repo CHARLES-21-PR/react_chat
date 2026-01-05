@@ -2,6 +2,8 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { auth } from "../conectionAPI/firebase"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { db } from "../conectionAPI/firebase";
+import { setDoc, doc } from "firebase/firestore";
 
 function Login(props) {
     const [isRegistered, setIsRegistered] = useState(true)
@@ -18,16 +20,19 @@ function Login(props) {
         }
     }
 
-    function registerUser(email, password){
-        createUserWithEmailAndPassword(auth, email, password)
-        .then(userFirebase => {
-            alert("Usuario registrado:" + userFirebase.user.email);
-        })
-        .catch(error => {
-            alert("Error al registrar usuario:" + error.message);
-            props.setUser(userFirebase.user);
-        });
-
+    async function registerUser(email, password){
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            // Guardar en Firestore
+            await setDoc(doc(db, "users", user.uid), {
+                email: user.email,
+                uid: user.uid
+            });
+            alert("Usuario registrado: " + user.email);
+        } catch (error) {
+            alert("Error al registrar usuario: " + error.message);
+        }
     }
 
     function loginUser(email, password){

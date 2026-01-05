@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import Pagechat from './pages/Pagechat'
 import Login from './auth/Login'
+import SeachUser from './pages/SeachUser'
 import { auth } from "./conectionAPI/firebase"
 import { onAuthStateChanged } from "firebase/auth";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import './App.css'
 
@@ -17,7 +18,13 @@ function App() {
 
   return (
     <>
-      {user ? <Pagechat setUser={setUser} /> : <Login setUser={setUser} />}
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={user ? <Pagechat setUser={setUser} /> : <Login setUser={setUser} />}>
+              <Route path='search' element={<SeachUser />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
