@@ -22,6 +22,7 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -260,6 +261,9 @@ function Pagechat(props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
+        <Tography paragraph>
+          { `¡Biemvenido, ${auth.currentUser.email}!`}
+        </Tography>
         <button onClick={handleLogout}>Logout</button>
       </Box>
     </Box>
