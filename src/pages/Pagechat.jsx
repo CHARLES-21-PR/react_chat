@@ -47,15 +47,15 @@ const settings = [
 ];
 
 const menuItems = [
-    {
-        text: <Link to="/search" style={{ textDecoration: 'none', color: 'inherit' }}>Buscar Usuario</Link>,
-        icon: <Link to="/search" style={{ textDecoration: 'none', color: 'inherit' }}><PersonSearchIcon /></Link>
-    },
-    {
-        text: 'Amigos',
-        icon: <PeopleIcon />
-
-    }
+  {
+    text: 'Buscar Usuario',
+    icon: <PersonSearchIcon />, 
+    to: 'search'
+  },
+  {
+    text: 'Amigos',
+    icon: <PeopleIcon />
+  }
 ]
   
   
@@ -240,51 +240,101 @@ function Pagechat(props) {
         <List>
           {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={[
-                  {
-                    minHeight: 48,
-                    px: 2.5,
-                  },
-                  open
-                    ? {
-                        justifyContent: 'initial',
-                      }
-                    : {
-                        justifyContent: 'center',
-                      },
-                ]}
-              >
-                <ListItemIcon
+              {item.to ? (
+                <ListItemButton
+                  component={Link}
+                  to={item.to}
                   sx={[
                     {
-                      minWidth: 0,
-                      justifyContent: 'center',
+                      minHeight: 48,
+                      px: 2.5,
                     },
                     open
                       ? {
-                          mr: 3,
+                          justifyContent: 'initial',
                         }
                       : {
-                          mr: 'auto',
+                          justifyContent: 'center',
                         },
                   ]}
                 >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
+                  <ListItemIcon
+                    sx={[
+                      {
+                        minWidth: 0,
+                        justifyContent: 'center',
+                      },
+                      open
+                        ? {
+                            mr: 3,
+                          }
+                        : {
+                            mr: 'auto',
+                          },
+                    ]}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    sx={[
+                      open
+                        ? {
+                            opacity: 1,
+                          }
+                        : {
+                            opacity: 0,
+                          },
+                    ]}
+                  />
+                </ListItemButton>
+              ) : (
+                <ListItemButton
                   sx={[
+                    {
+                      minHeight: 48,
+                      px: 2.5,
+                    },
                     open
                       ? {
-                          opacity: 1,
+                          justifyContent: 'initial',
                         }
                       : {
-                          opacity: 0,
+                          justifyContent: 'center',
                         },
                   ]}
-                />
-              </ListItemButton>
+                >
+                  <ListItemIcon
+                    sx={[
+                      {
+                        minWidth: 0,
+                        justifyContent: 'center',
+                      },
+                      open
+                        ? {
+                            mr: 3,
+                          }
+                        : {
+                            mr: 'auto',
+                          },
+                    ]}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    sx={[
+                      open
+                        ? {
+                            opacity: 1,
+                          }
+                        : {
+                            opacity: 0,
+                          },
+                    ]}
+                  />
+                </ListItemButton>
+              )}
             </ListItem>
           ))}
         </List>
@@ -344,13 +394,8 @@ function Pagechat(props) {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
-          { location.pathname === '/' ? 
-            <>
-              <WavingHandIcon />
-              { `¡Biemvenido, ${auth.currentUser.email}!`}
-            </>
-             :
-              <Outlet /> }
+          
+              <Outlet /> 
         </div>
         
       </Box>

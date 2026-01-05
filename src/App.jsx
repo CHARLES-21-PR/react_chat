@@ -21,7 +21,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={user ? <Pagechat setUser={setUser} /> : <Login setUser={setUser} />}>
-              <Route path='search' element={<SeachUser />} />
+              <Route index path='search' element={<SeachUser />} />
           </Route>
         </Routes>
       </BrowserRouter>
