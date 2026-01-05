@@ -261,9 +261,9 @@ function Pagechat(props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Tography paragraph>
+        <Typography>
           { `¡Biemvenido, ${auth.currentUser.email}!`}
-        </Tography>
+        </Typography>
         <button onClick={handleLogout}>Logout</button>
       </Box>
     </Box>
