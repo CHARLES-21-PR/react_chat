@@ -5,13 +5,10 @@
   
 }
 
+body {
+  background-color: #dedada;
+}
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
 
 
 
@@ -52,4 +49,23 @@ input {
   display: block;
   position: absolute;
   bottom: 0;
+}
+
+.sideBarResponsive {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sideBar {
+    display: none;
+  }
+
+  .menuHamburger {
+    display: none !important;
+  }
+
+  .sideBarResponsive {
+    display: block;
+  }
 }

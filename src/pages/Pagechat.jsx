@@ -32,9 +32,15 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import PeopleIcon from '@mui/icons-material/People';
 import WavingHandIcon from '@mui/icons-material/WavingHand';
+import SettingsIcon from '@mui/icons-material/Settings';
 import SeachUser from '../pages/SeachUser';
 import { Navigate, useNavigate } from 'react-router-dom';
-
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import FolderIcon from '@mui/icons-material/Folder';
+import RestoreIcon from '@mui/icons-material/Restore';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const drawerWidth = 240;
 const settings = [
@@ -54,7 +60,8 @@ const menuItems = [
   },
   {
     text: 'Amigos',
-    icon: <PeopleIcon />
+    icon: <PeopleIcon />,
+    to: 'friends'
   }
 ]
   
@@ -174,17 +181,25 @@ function Pagechat(props) {
     setOpen(false);
   };
 
+  /*Responsive*/
+  const [value, setValue] = React.useState('recents');
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
  return (
-    <div>
+    <div style={{  }}>
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} sx={{ backgroundColor: "#314a64ff" }}>
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
+            className='menuHamburger'
             sx={[
               {
                 marginRight: 5,
@@ -192,11 +207,11 @@ function Pagechat(props) {
               open && { display: 'none' },
             ]}
           >
-            <MenuIcon />
+            <MenuIcon className='menuHamburger' />
           </IconButton>
           <Box sx={{ display: 'flex', justifyContent: 'space-between',  width: '100%' }}>
             <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+            SpeedChat
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
@@ -230,7 +245,7 @@ function Pagechat(props) {
           </Box>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} className='sideBar'>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -391,7 +406,7 @@ function Pagechat(props) {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1 }}>
         <DrawerHeader />
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
           
@@ -399,7 +414,80 @@ function Pagechat(props) {
         </div>
         
       </Box>
+
+
+
+      <Drawer
+        sx={{
+          width: 300,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: 300,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="right"
+        className='sideBar'
+      >
+        <Toolbar />
+        <Divider />
+        <List>
+          {['Usuario'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {['Contenido de la conversacion'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+
     </Box>
+    
+    <Box className='sideBarResponsive' sx={{ width: "100%" }}>
+        <BottomNavigation sx={{ width: "100%", position: "fixed", bottom: 0 }} value={value} onChange={handleChange}>
+      <BottomNavigationAction
+        label="Buscar"
+        value="recents"
+        icon={<PersonSearchIcon />}
+        component={Link}
+        to='search'
+      />
+      <BottomNavigationAction
+        label="Amigos"
+        value="favorites"
+        icon={<PeopleIcon />}
+        component={Link}
+        to='friends'
+      />
+      <BottomNavigationAction
+        label="Inbox"
+        value="nearby"
+        icon={<MailIcon />}
+        component={Link}
+        to='inbox'
+      />
+      <BottomNavigationAction label="Settings" value="folder" icon={<SettingsIcon />} />
+    </BottomNavigation>
+    </Box>
+    
     </div>
     
   )

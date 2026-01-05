@@ -42,9 +42,10 @@ function SeachUser() {
     
 
   return (
-    <div>
-      <h2>Buscar Usuario</h2>
-      <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+    <div style={{ height: "100vh", width: "100%", padding: "20px", background: "#f0f0f0ff"}}>
+      <h2>Buscar Usuarios</h2>
+      <br />
+      <Box sx={{ flexGrow: 1 }}>
         
         <Grid container spacing={2}>
           <Grid
