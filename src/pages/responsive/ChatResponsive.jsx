@@ -72,7 +72,7 @@ function ChatResponsive() {
       <Typography variant="h6" sx={{ p: 2, textAlign: 'center', background: '#314a64ff', color: 'white' }}>
         {selectedUser ? `Chat con: ${selectedUser.email}` : 'Selecciona un usuario'}
       </Typography>
-      <Box sx={{ flexGrow: 1, p: 2, overflowY: 'auto' }}>
+      <Box sx={{ flexGrow: 1, p: 2, overflowY: 'auto', marginBottom: '80px' }}>
         {messages.map((msg) => {
           const isMine = msg.senderId === auth.currentUser.uid;
           return (
@@ -99,7 +99,7 @@ function ChatResponsive() {
           );
         })}
       </Box>
-      <Box sx={{ p: 2, borderTop: '1px solid #ccc', marginBottom: 6 }}>
+      <Box sx={{ position: 'fixed', left: 0, right: 0, bottom: 56, p: 2, borderTop: '1px solid #ccc', background: '#f0f0f0ff', zIndex: 10 }}>
         <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
           <FormControl sx={{ flex: 1 }}>
             <OutlinedInput
