@@ -39,11 +39,11 @@ function Login(props) {
         signInWithEmailAndPassword(auth, email, password)
         .then(userFirebase => {
             alert("Usuario logueado:" + userFirebase.user.email);
+            props.setUser(userFirebase.user);
         })
         .catch(error => {
             alert("Error al loguear usuario:" + error.message);
         });
-        props.setUser(userFirebase.user);
     }
     
   return (

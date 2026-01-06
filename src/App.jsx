@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Pagechat from './pages/Pagechat'
 import Login from './auth/Login'
 import SeachUser from './pages/SeachUser'
 import ListFriend from './pages/ListFriend'
+import ChatResponsive from './pages/responsive/ChatResponsive'
 import Inbox from './pages/responsive/inbox'
 import { auth } from "./conectionAPI/firebase"
 import { onAuthStateChanged } from "firebase/auth";
@@ -18,6 +19,15 @@ function App() {
     setUser(currentUser);
   });
 
+  const [isResponsive, setIsResponsive] = useState(window.innerWidth < 900);
+  useEffect(()=> {
+    const checkSize = () => {
+      setIsResponsive(window.innerWidth < 900);
+    } 
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  } , []);
+
   return (
     <>
       <BrowserRouter>
@@ -26,6 +36,8 @@ function App() {
               <Route index path='search' element={<SeachUser />} />
               <Route path='friends' element={<ListFriend />} />
               <Route path='inbox' element={<Inbox />} />
+              <Route path='inbox/:uid' element={isResponsive ? <ChatResponsive /> : <Pagechat />} />
+              
           </Route>
         </Routes>
       </BrowserRouter>

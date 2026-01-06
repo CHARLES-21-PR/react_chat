@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { use } from 'react'
 import { useState, useEffect } from 'react'
+import { db } from "../conectionAPI/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { auth } from "../conectionAPI/firebase"
 import { signOut } from "firebase/auth";
 import { styled, useTheme } from '@mui/material/styles';
 import { Link, Outlet } from 'react-router-dom';
- 
+import { addDoc, collection, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
+import { getAuth } from "firebase/auth" 
+import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -41,6 +45,10 @@ import FolderIcon from '@mui/icons-material/Folder';
 import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PersonIcon from '@mui/icons-material/Person';
+import FormControl, { useFormControl } from '@mui/material/FormControl';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import FormHelperText from '@mui/material/FormHelperText';
 
 const drawerWidth = 240;
 const settings = [
@@ -145,7 +153,40 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 
+function MyFormHelperText() {
+  const { focused } = useFormControl() || {};
+
+  const helperText = React.useMemo(() => {
+    if (focused) {
+      return 'This field is being focused';
+    }
+
+    return 'Helper text';
+  }, [focused]);
+
+  return <FormHelperText>{helperText}</FormHelperText>;
+}
+
 function Pagechat(props) {
+    const { uid } = useParams();
+    const [selectedUser, setSelectedUser] = useState(null);
+    useEffect(() => {
+      async function fetchUserByUid() {
+        if (uid) {
+          const userRef = doc(db, "users", uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            setSelectedUser({ id: uid, ...userSnap.data() });
+          } else {
+            setSelectedUser(null);
+          }
+        } else {
+          setSelectedUser(null);
+        }
+      }
+      fetchUserByUid();
+    }, [uid]);
+
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   
@@ -180,6 +221,60 @@ function Pagechat(props) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  /* Mensajeria */
+   const [text, setText] = useState("");
+  const auth = getAuth();
+  
+
+  const sendMessage = async (e) => {
+    e.preventDefault();
+
+    if (!text.trim()) return;
+
+    const senderId = auth.currentUser.uid;
+    // receiverId debe ser el id del usuario seleccionado
+    const receiverId = selectedUser?.id || uid;
+    if (!receiverId) {
+      alert("No hay usuario receptor seleccionado");
+      return;
+    }
+    const chatId = [senderId, receiverId].sort().join("_");
+
+    await addDoc(collection(db, "chats", chatId, "messages"), {
+      text,
+      senderId,
+      receiverId,
+      createdAt: serverTimestamp(),
+    });
+
+    setText(""); 
+    };
+
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+      if (!selectedUser) return;
+
+      const chatId = [auth.currentUser.uid, selectedUser.id]
+        .sort()
+        .join("_");
+
+      const q = query(
+        collection(db, "chats", chatId, "messages"),
+        orderBy("createdAt", "asc")
+      );
+
+      const unsub = onSnapshot(q, (snapshot) => {
+        setMessages(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+        );
+      });
+
+      return () => unsub();
+    }, [selectedUser]);
 
   /*Responsive*/
   const [value, setValue] = React.useState('recents');
@@ -410,7 +505,7 @@ function Pagechat(props) {
         <DrawerHeader />
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
           
-              <Outlet /> 
+              <Outlet context={{ setSelectedUser }} />
         </div>
         
       </Box>
@@ -418,46 +513,95 @@ function Pagechat(props) {
 
 
       <Drawer
-        sx={{
-          width: 300,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 300,
-            boxSizing: 'border-box',
-          },
-        }}
-        variant="permanent"
-        anchor="right"
-        className='sideBar'
-      >
-        <Toolbar />
-        <Divider />
-        <List>
-          {['Usuario'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['Contenido de la conversacion'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
+  sx={{
+    width: 300,
+    flexShrink: 0,
+    '& .MuiDrawer-paper': {
+      width: 300,
+      boxSizing: 'border-box',
+    },
+  }}
+  variant="permanent"
+  anchor="right"
+  className="sideBar"
+>
+  <Toolbar />
+  <Divider />
+
+  {/* 👤 USUARIO SELECCIONADO */}
+  <List>
+    <ListItem disablePadding>
+      <ListItemButton>
+        <ListItemIcon>
+          {selectedUser ? <PersonIcon /> : <WavingHandIcon />}
+        </ListItemIcon>
+        <ListItemText
+          primary={
+            selectedUser
+              ? `Usuario: ${selectedUser.email}`
+              : "No hay usuario seleccionado"
+          }
+        />
+      </ListItemButton>
+    </ListItem>
+  </List>
+
+  <Divider />
+
+  {/* 💬 MENSAJES */}
+  <Box
+    sx={{
+      flexGrow: 1,
+      p: 2,
+      overflowY: "auto",
+      height: "calc(100vh - 200px)",
+    }}
+  >
+    {messages.map((msg) => {
+      const isMine = msg.senderId === auth.currentUser.uid;
+
+      return (
+        <Box
+          key={msg.id}
+          sx={{
+            display: "flex",
+            justifyContent: isMine ? "flex-end" : "flex-start",
+            mb: 1,
+          }}
+        >
+          <Box
+            sx={{
+              maxWidth: "80%",
+              p: 1,
+              borderRadius: 2,
+              backgroundColor: isMine ? "#1976d2" : "#e0e0e0",
+              color: isMine ? "#fff" : "#000",
+            }}
+          >
+            {msg.text}
+          </Box>
+        </Box>
+      );
+    })}
+  </Box>
+
+  <Divider />
+
+  {/* ✉️ INPUT DE ENVÍO */}
+  <Box sx={{ p: 2 }}>
+    <form onSubmit={sendMessage}>
+      <FormControl sx={{ width: "100%" }}>
+        <OutlinedInput
+          placeholder="Escribe un mensaje"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          disabled={!selectedUser}
+        />
+      </FormControl>
+    </form>
+  </Box>
+</Drawer>
+
 
     </Box>
     

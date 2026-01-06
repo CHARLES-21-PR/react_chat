@@ -3,6 +3,8 @@ import { collection, getDocs } from "firebase/firestore";
 import { db } from "../conectionAPI/firebase"
 import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -26,6 +28,7 @@ const Demo = styled('div')(({ theme }) => ({
 }));
 
 function SeachUser() {
+      const { setSelectedUser } = useOutletContext();
     const [userFirebase, setUserFirebase] = useState([]);
     const [dense, setDense] = React.useState(false);
   const [secondary, setSecondary] = React.useState(false);
@@ -39,7 +42,24 @@ function SeachUser() {
       fetchUser();
     }, []);
 
-    
+    const navigate = useNavigate();
+
+    const [isResponsive, setIsResponsive] = useState(window.innerWidth < 900);
+  useEffect(()=> {
+    const checkSize = () => {
+      setIsResponsive(window.innerWidth < 900);
+    } 
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  } , []);
+
+  function handleInboxClick(user) {
+    if (isResponsive) {
+      navigate(`/inbox/${user.id}`);
+    } else {
+      setSelectedUser(user);
+    }
+  }
 
   return (
     <div style={{ height: "100vh", width: "100%", padding: "20px", background: "#f0f0f0ff"}}>
@@ -61,7 +81,7 @@ function SeachUser() {
                   <ListItem
                     key={index}
                     secondaryAction={
-                      <IconButton edge="end" aria-label="comment">
+                      <IconButton edge="end" aria-label="comment" onClick={() => handleInboxClick(user)}>
                         <CommentIcon />
                       </IconButton>
                     }
@@ -85,4 +105,4 @@ function SeachUser() {
   )
 }
 
-export default SeachUser
+export default SeachUser;
