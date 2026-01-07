@@ -539,7 +539,7 @@ function Pagechat(props) {
         <ListItemText
           primary={
             selectedUser
-              ? `Usuario: ${selectedUser.email}`
+              ? ` ${selectedUser.email}`
               : "No hay usuario seleccionado"
           }
         />

@@ -91,7 +91,7 @@ function ChatResponsive() {
               sx={{
                 display: 'flex',
                 justifyContent: isMine ? 'flex-end' : 'flex-start',
-                mb: 1,
+                mb: 7,
               }}
             >
               <Box
