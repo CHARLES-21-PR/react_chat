@@ -519,6 +519,7 @@ function Pagechat(props) {
     '& .MuiDrawer-paper': {
       width: 300,
       boxSizing: 'border-box',
+      
     },
   }}
   variant="permanent"

@@ -38,11 +38,18 @@ function ChatResponsive() {
       orderBy('createdAt', 'asc')
     );
     const unsub = onSnapshot(q, (snapshot) => {
+      const now = new Date();
       setMessages(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
+        snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter((msg) => {
+            if (!msg.expiresAt) return true;
+            const exp = msg.expiresAt.toDate ? msg.expiresAt.toDate() : new Date(msg.expiresAt);
+            return exp > now;
+          })
       );
     });
     return () => unsub();
@@ -58,17 +65,20 @@ function ChatResponsive() {
       return;
     }
     const chatId = [senderId, receiverId].sort().join('_');
+    // Expira en 24 horas (86400 segundos)
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await addDoc(collection(db, 'chats', chatId, 'messages'), {
       text,
       senderId,
       receiverId,
       createdAt: serverTimestamp(),
+      expiresAt,
     });
     setText("");
   };
 
   return (
-    <Box sx={{ width: '100%', height: '100vh', background: '#f0f0f0ff', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ width: '100%', height: '100vh', background: '#f0f0f0ff', display: 'flex', position: 'relative', flexDirection: 'column' }}>
       <Typography variant="h6" sx={{ p: 2, textAlign: 'center', background: '#314a64ff', color: 'white' }}>
         {selectedUser ? `Chat con: ${selectedUser.email}` : 'Selecciona un usuario'}
       </Typography>

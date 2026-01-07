@@ -6,6 +6,7 @@ import SeachUser from './pages/SeachUser'
 import ListFriend from './pages/ListFriend'
 import ChatResponsive from './pages/responsive/ChatResponsive'
 import Inbox from './pages/responsive/inbox'
+import Welcome from './pages/Welcome'
 import { auth } from "./conectionAPI/firebase"
 import { onAuthStateChanged } from "firebase/auth";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -32,13 +33,13 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={user ? <Pagechat setUser={setUser} /> : <Login setUser={setUser} />}>
-              <Route index path='search' element={<SeachUser />} />
+            <Route path='/' element={user ? <Pagechat setUser={setUser} /> : <Login setUser={setUser} />}>
+              <Route index element={<Welcome />} />
+              <Route path='search' element={<SeachUser />} />
               <Route path='friends' element={<ListFriend />} />
               <Route path='inbox' element={<Inbox />} />
               <Route path='inbox/:uid' element={isResponsive ? <ChatResponsive /> : <Pagechat />} />
-              
-          </Route>
+            </Route>
         </Routes>
       </BrowserRouter>
     </>
