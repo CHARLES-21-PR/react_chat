@@ -8,7 +8,7 @@ import ChatResponsive from './pages/responsive/ChatResponsive'
 import Inbox from './pages/responsive/inbox'
 import Welcome from './pages/Welcome'
 import Profile from '././auth/Profile'
-import GeneralChat from './pages/generalChat'
+import GeneralChat from './pages/GeneralChat'
 import { auth } from "./conectionAPI/firebase"
 import { onAuthStateChanged } from "firebase/auth";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
