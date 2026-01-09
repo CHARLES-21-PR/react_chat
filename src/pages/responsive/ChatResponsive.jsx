@@ -79,10 +79,10 @@ function ChatResponsive() {
 
   return (
     <Box sx={{ width: '100%', height: '100vh', background: '#f0f0f0ff', display: 'flex', position: 'relative', flexDirection: 'column' }}>
-      <Typography variant="h6" sx={{ p: 2, textAlign: 'center', background: '#314a64ff', color: 'white' }}>
+      <Typography variant="h6" sx={{ p: 2, textAlign: 'center', background: '#314a64ff', color: 'white', position: 'fixed', top: 55, width: '100%', zIndex: 10 }}>
         {selectedUser ? `Chat con: ${selectedUser.email}` : 'Selecciona un usuario'}
       </Typography>
-      <Box sx={{ flexGrow: 1, p: 2, overflowY: 'auto', marginBottom: '80px' }}>
+      <Box sx={{ flexGrow: 1, p: 2, overflowY: 'auto', marginBottom: '80px', marginTop: '60px' }}>
         {messages.map((msg) => {
           const isMine = msg.senderId === auth.currentUser.uid;
           return (
@@ -104,6 +104,11 @@ function ChatResponsive() {
                 }}
               >
                 {msg.text}
+                {msg.createdAt && (
+                            <Typography variant="caption" sx={{ display: "block", textAlign: "right", mt: 0.5 }}>
+                                {new Date(msg.createdAt.seconds * 1000).toLocaleString()}
+                            </Typography>
+                            )}
               </Box>
             </Box>
           );

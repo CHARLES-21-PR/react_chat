@@ -51,14 +51,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import FormHelperText from '@mui/material/FormHelperText';
 
 const drawerWidth = 240;
-const settings = [
-    { name: 'Profile',
-      Icon:   <AccountBoxIcon />
-     },
-    { name: 'Logout',
-      Icon:   <LogoutIcon />
-    }
-];
+
 
 const menuItems = [
   {
@@ -70,6 +63,11 @@ const menuItems = [
     text: 'Amigos',
     icon: <PeopleIcon />,
     to: 'friends'
+  },
+  {
+    text: 'Chat General',
+    icon: <MailIcon />,
+    to: 'generalChat'
   }
 ]
   
@@ -166,8 +164,17 @@ function MyFormHelperText() {
 
   return <FormHelperText>{helperText}</FormHelperText>;
 }
-
+const settings = [
+    { name: `Profile (${auth.currentUser?.email})`,
+      Icon:   <AccountBoxIcon />
+     },
+    { name: 'Logout',
+      Icon:   <LogoutIcon />
+    }
+];
 function Pagechat(props) {
+      const navigate = useNavigate();
+    
     const { uid } = useParams();
     const [selectedUser, setSelectedUser] = useState(null);
     useEffect(() => {
@@ -202,12 +209,15 @@ function Pagechat(props) {
   };
 
   const handleMenuClick = (setting) => {
-    handleCloseUserMenu();
-    if (setting === 'Logout') {
-        signOut(auth);
-        props.setUser(null);
-    }
+  handleCloseUserMenu();
+  if (setting === 'Logout') {
+      signOut(auth);
+      props.setUser(null);
   }
+  if (setting.startsWith('Profile')) {
+    navigate('profile');
+  }
+}
 
 
 
@@ -512,6 +522,7 @@ function Pagechat(props) {
 
 
 
+      { location.pathname !== "/" || location.pathname !== "/generalChat" && 
       <Drawer
   sx={{
     width: 300,
@@ -554,7 +565,8 @@ function Pagechat(props) {
     sx={{
       flexGrow: 1,
       p: 2,
-      overflowY: "auto",
+        overflowY: "auto",
+        
       height: "calc(100vh - 200px)",
     }}
   >
@@ -566,21 +578,35 @@ function Pagechat(props) {
           key={msg.id}
           sx={{
             display: "flex",
+            
+            height: "auto",
+            
             justifyContent: isMine ? "flex-end" : "flex-start",
             mb: 1,
           }}
         >
           <Box
             sx={{
-              maxWidth: "80%",
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
+              whiteSpace: "pre-line",
               p: 1,
+              maxWidth: "80%",
               borderRadius: 2,
               backgroundColor: isMine ? "#1976d2" : "#e0e0e0",
               color: isMine ? "#fff" : "#000",
             }}
           >
             {msg.text}
+            {msg.createdAt && (
+            <Typography variant="caption" sx={{ display: "block", textAlign: "right", mt: 0.5 }}>
+                {new Date(msg.createdAt.seconds * 1000).toLocaleString()}
+            </Typography>
+            )}
           </Box>
+          
+            
+          
         </Box>
       );
     })}
@@ -602,6 +628,7 @@ function Pagechat(props) {
     </form>
   </Box>
 </Drawer>
+      }
 
 
     </Box>
@@ -623,13 +650,19 @@ function Pagechat(props) {
         to='friends'
       />
       <BottomNavigationAction
-        label="Inbox"
+        label="General"
         value="nearby"
         icon={<MailIcon />}
         component={Link}
-        to='inbox'
+        to='generalChat'
       />
-      <BottomNavigationAction label="Settings" value="folder" icon={<SettingsIcon />} />
+      <BottomNavigationAction 
+      label="Settings" 
+      value="folder" 
+      icon={<SettingsIcon />}
+      component={Link}
+      to='profile'
+      />
     </BottomNavigation>
     </Box>
     
